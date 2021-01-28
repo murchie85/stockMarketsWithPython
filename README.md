@@ -56,7 +56,8 @@ nvda_df = yf.download('NVDA',
 nvda_df.head()
 ```
 
-
+  
+  
 
 
 <div>
