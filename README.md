@@ -2457,7 +2457,7 @@ data
 
 One core issue a data scientist, engineer or statistician will have is that pandas whilst a great tool wont allow us to process high volume data in a sharded/distributed manner. So we want to get Spark to do the job.  
 
-I am not sure how spark reads from JSON, so i could simply save to CSV and work backwards. But from this point onwards will be some of my experimentation; follow at your own risk. 
+I am not sure how spark reads from JSON, so i could simply save to CSV or jsonfile and work backwards. But from this point onwards will be some of my experimentation; follow at your own risk. 
 
 
 ```python
@@ -2470,23 +2470,36 @@ from pyspark.sql import SparkSession
 
 
 ```python
-# Using data from previous multi run 
-
-df = sqlContext.jsonFile(data)
+spark = SparkSession.builder.appName('StockAnalytics').getOrCreate() 
 ```
 
 
-    ---------------------------------------------------------------------------
+```python
+## There is most definitely a way for me to move object to df without saving but for the sake of convenience...
 
-    NameError                                 Traceback (most recent call last)
+import json
+with open('data.json', 'w') as outfile:
+    json.dump(data, outfile)
+```
 
-    <ipython-input-91-4d24ef4d35b0> in <module>
-          1 # Using data from previous multi run
-          2 
-    ----> 3 df = sqlContext.jsonFile(data)
+
+```python
+# Using data from previous multi run 
+
+df = spark.read.json('data.json')
+```
+
+
+```python
+df.show()
+```
+
+    +--------------------+--------------------+--------------------+
+    |                 BIO|                ETSY|                NVDA|
+    +--------------------+--------------------+--------------------+
+    |[USD, [320509800,...|[USD, [1429191000...|[USD, [[[0.16, 15...|
+    +--------------------+--------------------+--------------------+
     
-
-    NameError: name 'sqlContext' is not defined
 
 
 ### Further Reading and useful Resources  
